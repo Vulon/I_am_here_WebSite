@@ -12,7 +12,7 @@
 <body>
 <div class="topnav">
     <button id="navHome" onclick="hubLoadSettings()">Home</button>
-    <button id="navSubjects">Subjects</button>
+    <button id="navSubjects" onclick="hubLoadSubjects()">Subjects</button>
     <button id="navGroups">Groups</button>
     <button id="navAuth" onclick="sign_out()">Sign out</button>
 </div>
@@ -23,18 +23,11 @@
 <br>
 
 <div id="container">
-    <table>
-        <tr>
-            <td>Id</td>
-            <td>Name</td>
-            <td>Description</td>
-            <td>Code</td>
-            <td>Subjects</td>
-            <td>Participators</td>
-        </tr>
-    </table>
-</div>
 
+</div>
+<div id="edit_panel" class="edit_panel">
+
+</div>
 
 <div id="progress-loader" class="progress-loader"></div>
 

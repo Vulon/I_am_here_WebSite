@@ -102,6 +102,7 @@ function isAccessTokenExpired() {
 }
 
 function sign_out() {
+    changeActivePage('Auth')
     window.localStorage.removeItem("access_token");
     window.localStorage.removeItem("refresh_token");
     window.localStorage.removeItem("access_token_expire_date");
