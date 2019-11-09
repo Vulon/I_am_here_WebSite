@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manager Hub</title>
+    <script src="corsHttp.js"></script>
+    <script src="security.js"></script>
+    <script src="hub.js"></script>
+    <link rel="stylesheet" href="manager_hub.css">
+
+</head>
+<body>
+<div class="topnav">
+    <button id="navHome" onclick="hubLoadSettings()">Home</button>
+    <button id="navSubjects">Subjects</button>
+    <button id="navGroups">Groups</button>
+    <button id="navAuth" onclick="sign_out()">Sign out</button>
+</div>
+<br>
+<div id="info_div" class="info_div">
+
+</div>
+<br>
+
+<div id="container">
+    <table>
+        <tr>
+            <td>Id</td>
+            <td>Name</td>
+            <td>Description</td>
+            <td>Code</td>
+            <td>Subjects</td>
+            <td>Participators</td>
+        </tr>
+    </table>
+</div>
+
+
+<div id="progress-loader" class="progress-loader"></div>
+
+<script>loadHub()</script>
+</body>
+</html>

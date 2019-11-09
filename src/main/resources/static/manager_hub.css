@@ -1,0 +1,119 @@
+
+.topnav {
+    text-align: center;
+    background-color: #00a9ff;
+    min-height: 40px;
+    margin: 0 auto;
+    position: sticky;
+    top: 0;
+}
+
+.navActive {
+    font-size: 22pt;
+    background-color: #ff037e;
+    color: white;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-radius: 40%;
+    border: 5px solid white;
+    padding: 18px 40px;
+}
+
+.navActive:hover {
+    font-size: 22pt;
+    background-color: #ff1300;
+    color: #000d52;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-radius: 40%;
+    border: 5px solid white;
+    padding: 18px 40px;
+    transition-duration: 0.4s;
+}
+
+.navInActive {
+    font-size: 22pt;
+    background-color: #e4faff;
+    color: #0900ff;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-radius: 40%;
+    border: 5px solid #0900ff;
+    padding: 18px 40px;
+    transition-duration: 0.4s;
+}
+
+.navInActive:hover {
+    font-size: 22pt;
+    background-color: #002eff;
+    color: ghostwhite;
+    border: 5px solid white;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-radius: 40%;
+
+    padding: 18px 40px;
+    transition-duration: 0.4s;
+}
+
+.info_div {
+    text-align: left;
+    background-color: #ff0009;
+    color: black;
+    font-size: 22pt;
+}
+
+.settingsContainer {
+    padding-top: 20px;
+    text-align: center;
+    width: 60%;
+    margin: 0 auto;
+    background-color: #b5d6ff;
+
+    font-size: 16pt;
+    color: #0900ff;
+    border-radius: 10%;
+    border: 4px solid #0900ff;
+}
+
+.serviceButton {
+    font-size: 16pt;
+    background-color: #e7e0f2;
+    color: #0003ca;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-radius: 50%;
+    border: 4px solid #0003ca;
+    padding: 12px 30px;
+    transition-duration: 0.4s;
+}
+
+.serviceButton:hover {
+    background-color: #002eff;
+    color: ghostwhite;
+    border: 4px solid white;
+}
+
+
+.progress-loader {
+    bottom: 10px;
+    text-align: center;
+    position: fixed;
+    margin: 0 auto;
+
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 64px;
+    height: 64px;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
