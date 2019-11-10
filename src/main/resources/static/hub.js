@@ -1,3 +1,4 @@
+
 function getActivePage() {
     if(document.getElementById('navHome').className === 'navActive'){
         return 'navHome';
@@ -10,6 +11,7 @@ function getActivePage() {
     }
     return null;
 }
+
 function changeActivePage(pageName) {
     const navHome = document.getElementById('navHome');
     const navSubjects = document.getElementById('navSubjects');

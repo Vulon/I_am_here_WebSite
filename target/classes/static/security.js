@@ -1,15 +1,5 @@
 let storedToken = "";
 
-function loadToken() {
-    storedToken = window.localStorage.getItem("tokenData");
-    if (storedToken === null) {
-        return null;
-    } else {
-        storedToken = JSON.parse(storedToken);
-        return storedToken;
-    }
-}
-
 function getStoredUUID() {
     return window.localStorage.getItem("UUID");
 }
@@ -70,6 +60,7 @@ function refresh_token(callback) {
         redirectToAuth()
         return
     }
+
     const rq = createRequest('/web/refresh', 'GET', function (xmlHttpRequest) {
         const text = xmlHttpRequest.responseText;
         storeTokenDataString(text);
