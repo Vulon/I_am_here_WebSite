@@ -251,12 +251,15 @@ limitations under the License.
             confirmationResult.confirm(code).then(function (result) {
                 // User signed in successfully.
                 var user = result.user;
-                //TODO add reroute later
+
+                //TODO relocate here
+
                 window.localStorage.setItem('UUID', user.uid);
-                window.location.href = 'auth.html';
+                window.location.href = 'http://92.243.164.53/auth.html?uuid='+user.uid;
                 // [START_EXCLUDE]
                 window.verifyingCode = false;
                 window.confirmationResult = null;
+
                 // [END_EXCLUDE]
             }).catch(function (error) {
                 // User couldn't sign in (bad verification code?)

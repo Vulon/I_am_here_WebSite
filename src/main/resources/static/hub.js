@@ -37,7 +37,7 @@ function changeActivePage(pageName) {
 function loadHub() {
     changeActivePage('Home')
     if (isAccessTokenExpired()) {
-        refresh_token(loadHub)
+        refresh_token(hubLoadSettings)
         return;
     }
     hubLoadSettings()
@@ -55,7 +55,6 @@ function hubLoadSettings() {
         return
     }
     const request = createRequest('/web/credentials', 'GET', function (xmlHttpRequest) {
-
         const text = xmlHttpRequest.responseText;
         console.log(text);
         const json = JSON.parse(text);
@@ -77,9 +76,12 @@ function hubLoadSettings() {
     addHeader(request, 'access_token', getAccessToken());
     sendRequest(request);
 }
-
 function hubLoadSubjects() {
-    changeActivePage('Subjects')
+
+}
+
+function hubLoadGroups() {
+    changeActivePage('Groups')
     edited_object = null;
     startSpinning()
     if (isAccessTokenExpired()) {
@@ -87,7 +89,7 @@ function hubLoadSubjects() {
         return
     }
     const container = document.getElementById("container")
-    container.innerHTML = '<table id="subject_container">\n' +
+    container.innerHTML = '<table id="groups_container">\n' +
         '        <tr>\n' +
         '            <th>Id</th>\n' +
         '            <th>Name</th>\n' +
@@ -96,15 +98,19 @@ function hubLoadSubjects() {
         '            <th>Subjects</th>\n' +
         '            <th>Participators</th>\n' +
         '        </tr>\n' +
-        '        <div id="subject_table">            \n' +
+        '        <div id="groups_table">            \n' +
         '        </div>        \n' +
         '    </table>';
 
     hubHideEditPanel();
+    if(isAccessTokenExpired()){
+        refresh_token(hubLoadGroups);
+        return;
+    }
     const request = createRequest("/web/parties", "GET", function (xmlHttpRequest) {
         console.log(xmlHttpRequest.responseText)
         const json = JSON.parse(xmlHttpRequest.responseText)
-        const table = document.getElementById("subject_table")
+        const table = document.getElementById("groups_table")
         party_list = json;
         for(i in json){
             table.innerHTML = table.innerHTML +
@@ -155,6 +161,104 @@ function stopSpinning() {
     const loader = document.getElementById('progress-loader');
     loader.hidden = true;
 }
+
+
+
+
+function hubOpenModal(type) {
+    // Get the modal
+    let modal = document.getElementById("myModal");
+    modal.style.display = "block";
+    const content = document.getElementById("modal-content");
+    if(type === 'Subjects'){
+        if(isAccessTokenExpired()){
+            refresh_token(hubOpenModal(type));
+            return;
+        }
+
+        const request = createRequest("/web/subjects", 'GET', function (xmlHttpRequest) {
+            console.log("Edited object subjects: " + edited_object.subjects);
+            const text = xmlHttpRequest.responseText;
+            const json = JSON.parse(text);
+            let counter = 0;
+            content.innerHTML = '';
+            
+            const buttonPressCallback = function (id) {
+                let sb;
+                sb.subect_id = id;
+                let btn =document.getElementById("modal_button" + id);
+                sb.name = btn.innerText;
+                edited_object.subjects.push(sb);
+                btn.className = "modal_button_down";
+                const inner = function () {
+                    const index = edited_object.subjects.indexOf(sb);
+                    edited_object.subjects.splice(index, 1);
+                    btn.className = "modal_button_up";
+                    btn.onclick = function () {
+                        buttonPressCallback(id);
+                    };
+                }
+            }
+
+            const buttonReleaseCallback = function (id) {
+                let sb;
+                sb.subect_id = id;
+                let btn =document.getElementById("modal_button" + id);
+                sb.name = btn.innerText;
+
+                const index = edited_object.subjects.indexOf(sb);
+                edited_object.subjects.splice(index, 1);
+                btn.className = "modal_button_up";
+                btn.onclick = function () {
+                    edited_object.subjects.push(sb);
+                    btn.className = "modal_button_down";
+                    btn.onclick = function () {
+                        buttonReleaseCallback(id);
+                    };
+                }
+            }
+            
+            for(i in edited_object.subjects){
+                content.innerHTML = content.innerHTML + '' +
+                    '<button class="modal_button_down" id="modal_button" '+edited_object.subjects[i].subjectId+'>'+edited_object.subjects[i].name+'</button>'
+                counter++;
+                document.getElementById("modal_button"+ edited_object.subjects[i].subjectId).onclick=buttonReleaseCallback(edited_object.subjects[i].subjectId)
+
+                if(counter >= 3){
+                    content.innerHTML = content.innerHTML + '<br>';
+                    counter = 0;
+                }
+            }
+            for(i in json){
+                let item;
+                item.name = json[i].name;
+                item.subjectId = json[i].subjectId;
+                if(!edited_object.subjects.includes(item)){
+                    content.innerHTML = content.innerHTML + '' +
+                        '<button class="modal_button_up" id="modal_button" '+item.subjectId+'>'+item.name+'</button>';
+                    counter++;
+                    document.getElementById("modal_button" + item.subjectId).onclick=buttonPressCallback(item.subjectId)
+                    if(counter >= 3){
+                        content.innerHTML = content.innerHTML + '<br>';
+                        counter = 0;
+                    }
+                }
+            }
+
+        }, function (statusCode) {
+            notify("Something went wrong, when tried to load subjects");
+        });
+        addHeader(request, 'access_token', getAccessToken());
+        sendRequest(request, null);
+    }else if(type === 'Participators'){
+
+    }
+}
+
+function hubHideModal() {
+    var modal = document.getElementById("myModal");
+    modal.style.display = "none";
+}
 function hubHideEditPanel() {
     const page = getActivePage();
     const editPanel = document.getElementById('edit_panel');
@@ -175,18 +279,18 @@ function hubExpandEditPanel(id) {
     const editPanel = document.getElementById('edit_panel');
     if(page === 'navHome'){
         editPanel.innerHTML='';
-    }else if(page==='navSubjects'){
+    }else if(page==='navGroups'){
         if(id === null){
             const jsonText = '{' +
                 '"id": "0", ' +
                 '"name": " ", ' +
                 '"description": " " , ' +
                 '"code": " ", ' +
-                '"subjects": " ", ' +
-                '"participators": " "' +
+                '"subjects": [], ' +
+                '"participators": []' +
                 '}';
-            console.log(jsonText)
             edited_object = JSON.parse(jsonText);
+            console.log("Edited object: " + edited_object)
         }else{
             edited_object = party_list[id];
         }
@@ -203,15 +307,14 @@ function hubExpandEditPanel(id) {
             '                <input type="text" id="edit_code" placeholder="Code">\n' +
             '            </td>\n' +
             '            <td >\n' +
-            '                <button id="edit_subjects" class="serviceButton">Subjects</button>\n' +
+            '                <button id="edit_subjects" class="serviceButton" onclick="hubOpenModal(\'Subjects\')">Subjects</button>\n' +
             '            </td>\n' +
             '            <td >\n' +
-            '                <button id="edit_participators" class="serviceButton">Participators</button>\n' +
+            '                <button id="edit_participators" class="serviceButton" onclick="hubOpenModal(\'Participators\')">Participators</button>\n' +
             '            </td>\n' +
             '        </tr>\n' +
             '    </table>\n' +
-            '    <button id="edit_save_button" class="serviceButton">Save</button>\n' +
-            '    <button id="edit_cancel_button" class="serviceButton">Cancel</button>' +
+            '    <button id="edit_save_button" class="serviceButton" onclick="hubEditSaveHandler()">Save</button>\n' +
             '    <button class="add_button" onclick="hubHideEditPanel()">-</button>';
         const edit_id = document.getElementById('edit_id');
         const edit_name = document.getElementById('edit_name');
@@ -223,9 +326,35 @@ function hubExpandEditPanel(id) {
         edit_description.value=edited_object.description;
         edit_code.value=edited_object.code;
 
-    }else if(page==='navGroups'){
+    }else if(page==='navSubjects'){
 
     }else{
         editPanel.innerHTML='';
+    }
+}
+
+function hubEditSaveHandler() {
+    const page = getActivePage();
+    if(page === "navGroups"){
+        if(isAccessTokenExpired()){
+            refresh_token(hubEditSaveHandler);
+            return
+        }
+        edited_object.name = document.getElementById("edit_name").value;
+        edited_object.description = document.getElementById("edit_description").value;
+        edited_object.code= document.getElementById('edit_code').value;
+
+        const request = createRequest("/web/party", "POST", function (xmlHttpRequest) {
+            hubLoadGroups()
+        }, function (statusCode) {
+            notify("Request to upload group failed with code " + statusCode)
+        });
+        addHeader(request, "access_token", getAccessToken());
+        addHeader(request, "Content-Type", "application/json");
+        edited_object.manager_id = -1;
+        console.log("Trying to send group object: " + JSON.stringify(edited_object));
+        sendRequest(request, JSON.stringify(edited_object));
+    }else if(page === "navSubjects"){
+
     }
 }

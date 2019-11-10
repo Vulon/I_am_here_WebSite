@@ -1,6 +1,7 @@
 const urlbase = "http://localhost:8082";
 
-//const urlbase = 'http://92.243.164.53:8082/web/';
+//const urlbase = 'http://92.243.164.53:8082';
+
 
 
 function addCorsHeaders(xmlHttpRequest) {
@@ -10,6 +11,7 @@ function addCorsHeaders(xmlHttpRequest) {
     xmlHttpRequest.withCredentials = true;
 }
 
+//"/web/register"
 function createRequest(path, method, responseCallBack, errorCallBack) {
     const xmlHttpRequest = new XMLHttpRequest();
     xmlHttpRequest.open(method, urlbase + path, true);
@@ -22,13 +24,15 @@ function createRequest(path, method, responseCallBack, errorCallBack) {
                 errorCallBack(xmlHttpRequest.status);
             }
         }
-    }
+    };
+
     return xmlHttpRequest;
 }
 
 function sendRequest(xmlHttpRequest, data) {
     xmlHttpRequest.send(data);
 }
+
 
 function addHeader(xmlHttpRequest, headerKey, headerData) {
     xmlHttpRequest.setRequestHeader(headerKey, headerData);

@@ -109,6 +109,7 @@ async function doRegister() {
                     stopSpinning()
                 }
             );
+
             addHeader(rq, 'UUID', uuid)
             addHeader(rq, 'password', pass1)
             sendRequest(rq, null)

@@ -1,7 +1,17 @@
 let storedToken = "";
 
 function getStoredUUID() {
-    return window.localStorage.getItem("UUID");
+    let uuid = window.localStorage.getItem("UUID");
+    if(uuid){
+        return uuid;
+    }else{
+        const urlparams =  window.location.search.slice(1).split('=');
+        if(urlparams[0] === 'uuid'){
+            window.localStorage.setItem('UUID', urlparams[1]);
+            return urlparams[1];
+        }
+    }
+
 }
 
 function storeTokenDataString(tokenDataString) {

@@ -142,3 +142,65 @@
     width: 45px;
     height: 45px;
 }
+.add_button:hover{
+    background-color: #002eff;
+    color: ghostwhite;
+    border: 4px solid white;
+}
+
+
+
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.modal-content {
+    background-color: #fefefe;
+    margin: 30% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+}
+
+/* The Modal Close Button */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.modal-content-box{
+    overflow: auto;
+    text-align: center;
+
+}
+
+.modal_button_up{
+    border-radius: 30%;
+    border: 4px solid red;
+    background-color: #e7e0f2;
+    color: #0003ca;
+}
+
+.modal_button_down {
+    border: 4px inset #00f33b;
+}

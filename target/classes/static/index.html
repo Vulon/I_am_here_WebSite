@@ -13,7 +13,7 @@
 <div class="topnav">
     <button id="navHome" onclick="hubLoadSettings()">Home</button>
     <button id="navSubjects" onclick="hubLoadSubjects()">Subjects</button>
-    <button id="navGroups">Groups</button>
+    <button id="navGroups" onclick="hubLoadGroups()">Groups</button>
     <button id="navAuth" onclick="sign_out()">Sign out</button>
 </div>
 
@@ -26,6 +26,20 @@
 <div id="container">
 
 </div>
+
+<!-- The Modal -->
+<div id="myModal" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content">
+        <span class="close" onclick="hubHideModal()">&times;</span>
+        <div id="modal-content">
+
+        </div>
+    </div>
+
+</div>
+
+
 <div id="edit_panel" class="edit_panel">
 
 </div>
