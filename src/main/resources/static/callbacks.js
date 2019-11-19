@@ -1,8 +1,8 @@
 function ModalButtonCallback(button) {
     if(button.id.includes('subject_modal_button')){
         const id = parseInt(button.id.replace("subject_modal_button", ""));
-        const name = button.value;
-        const jsonText = '{"id":'+id+',"name":"'+name+'"}'
+
+        const jsonText = '{"id":'+id+',"name": "'+button.innerText+'"}'
         const jsonObject = JSON.parse(jsonText)
         if(button.className === 'modal_button_up'){
             edited_object.subjects.push(jsonObject);

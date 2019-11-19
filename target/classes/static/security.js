@@ -59,7 +59,7 @@ function redirectToAuth(message) {
     window.location.href = "auth.html";
 }
 
-function refresh_token(callback) {
+function refresh_token(callback, param) {
     const refresh_expire = getRefreshTokenTimestamp();
     const refresh = getRefreshToken();
     if (refresh === null || refresh_expire === null) {
@@ -74,8 +74,8 @@ function refresh_token(callback) {
     const rq = createRequest('/web/refresh', 'GET', function (xmlHttpRequest) {
         const text = xmlHttpRequest.responseText;
         storeTokenDataString(text);
-        if (!callback) {
-            callback()
+        if (callback) {
+            callback(param)
         }
     }, function (statusCode) {
         if (statusCode === 403) {

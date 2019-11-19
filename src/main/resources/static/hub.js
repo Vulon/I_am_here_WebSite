@@ -194,6 +194,15 @@ function hubLoadGroups() {
             cell_id.code = "code" + json[i].id;
 
 
+            row.id = "table_row" + i;
+
+            row.onclick=function(){
+                console.log("Row callback for i " + this.id)
+                const id = parseInt(this.id.replace("table_row", ""))
+                hubExpandEditPanel(id)
+            }
+
+
         }
         const row = table.insertRow(0);
         row.insertCell(0).innerHTML = "ID"
@@ -246,29 +255,30 @@ function hubOpenModal(type) {
     // Get the modal
     let modal = document.getElementById("myModal");
     if(isAccessTokenExpired()){
-        refresh_token(hubOpenModal(type));
+        refresh_token(hubOpenModal, type);
         return;
     }
     modal.style.display = "none";
     const content = document.getElementById("modal-content");
     if(type === 'Subjects'){
-
         const request = createRequest("/web/subjects", 'GET', function (xmlHttpRequest) {
             modal.style.display = "block";
-            console.log("Edited object subjects: " + edited_object.subjects);
+            console.log("Edited object subjects: " + JSON.stringify(edited_object.subjects));
             const text = xmlHttpRequest.responseText;
             const json = JSON.parse(text);
             let counter = 0;
-            content.innerHTML = '';
-            
+            content.innerHTML = '<table id="subjects_modal_table"></table>';
+            const table = document.getElementById("subjects_modal_table");
+            let row = table.insertRow(0)
+
             for(i in edited_object.subjects){
-                content.innerHTML = content.innerHTML + '' +
-                    '<button class="modal_button_down" onclick="ModalButtonCallback(this)" id="subject_modal_button'+edited_object.subjects[i].id+'">'+edited_object.subjects[i].name+'</button>'
+                let cell = row.insertCell(counter);
+                console.log("Trying to create button : " + edited_object.subjects[i].name)
+                cell.innerHTML = '<button id="subject_modal_button'+edited_object.subjects[i].id+'" class="modal_button_down" onclick="ModalButtonCallback(this)">'+edited_object.subjects[i].name+'</button>';
                 counter++;
 
-
                 if(counter >= 3){
-                    content.innerHTML = content.innerHTML + '<br>';
+                    row = table.insertRow(0)
                     counter = 0;
                 }
             }
@@ -282,16 +292,17 @@ function hubOpenModal(type) {
                 let item = JSON.parse(jsonText);
                 item.name = json[i].name;
                 item.id = json[i].id;
+                const modal_button = document.getElementById("subject_modal_button" + json[i].id)
 
-                if(!edited_object.subjects.includes(item)){
-
+                if(!modal_button){
+                    let cell = row.insertCell(counter);
+                    cell.innerHTML = '<button id="subject_modal_button'+item.id+'" class="modal_button_up" onclick="ModalButtonCallback(this)">'+item.name+'</button>';
                     console.log("Modal trying to create button with id: " + "modal_button" + item.id + " for item " + JSON.stringify(item))
-                    content.innerHTML = content.innerHTML + '' +
-                        '<button id="subject_modal_button'+item.id+'" class="modal_button_up" onclick="ModalButtonCallback(this)">'+item.name+'</button>';
+
                     counter++;
 
                     if(counter >= 3){
-                        content.innerHTML = content.innerHTML + '<br>';
+                        row = table.insertRow(0)
                         counter = 0;
                     }
                 }
@@ -302,8 +313,26 @@ function hubOpenModal(type) {
         });
         addHeader(request, 'access_token', getAccessToken());
         sendRequest(request, null);
-    }else if(type === 'Participators'){
-        console.log("this should not work yet")
+    }else if(type === 'Hosts'){
+        //Current edited object: subject
+        modal.style.display = "block";
+        console.log("Opened hosts model for hosts: " + edited_object.hosts)
+        let counter = 0;
+        if(edited_object.hosts.length < 1){
+            content.innerHTML = "This subject does not have a host yet"
+        }else{
+            content.innerHTML = '<table id="hosts_modal_table"></table>';
+            const table = document.getElementById("hosts_modal_table");
+            let row = table.insertRow(0)
+        }
+        for (i in edited_object.hosts){
+            let cell = row.insertCell(counter)
+            cell.innerHTML = cell.innerHTML = '<button id="host_modal_button'+item.id+'" class="modal_button_down" onclick="ModalButtonCallback(this)">'+item.name+'</button>';
+            if(counter >= 3){
+                row = table.insertRow(0)
+                counter = 0;
+            }
+        }
     }
 }
 
@@ -335,7 +364,7 @@ function hubExpandEditPanel(id) {
     }else if(page==='navGroups'){
         if(id === null){
             const jsonText = '{' +
-                '"id": "0", ' +
+                '"id": 0, ' +
                 '"name": " ", ' +
                 '"description": " " , ' +
                 '"code": " ", ' +
@@ -358,25 +387,26 @@ function hubExpandEditPanel(id) {
         const edit_subjects = row.insertCell(4)
         const edit_participators = row.insertCell(5)
 
+        console.log("Expand table for " + JSON.stringify(edited_object))
 
         edit_id.id="edit_id";
 
         edit_id.innerHTML = edited_object.id;
-        edit_name.innerHTML = '<input type="text" id="edit_name" placeholder="Name">';
-        edit_description.innerHTML = '<textarea id="edit_description" placeholder="Description"></textarea>'
-        edit_code.innerHTML = '<input type="text" id="edit_code" placeholder="Code">'
+        edit_name.innerHTML = '<input type="text" id="edit_name" placeholder="Name" value="'+edited_object.name+'">';
+
+        edit_description.innerHTML = '<textarea id="edit_description" placeholder="Description">'+edited_object.description+'</textarea>'
+
+
+        edit_code.innerHTML = '<input type="text" id="edit_code" placeholder="Code" value="'+edited_object.code+'">'
         edit_subjects.innerHTML = '<button id="edit_subjects" class="serviceButton" onclick="hubOpenModal(\'Subjects\')">Subjects</button>'
         edit_participators.innerHTML = '<button id="edit_participators" class="serviceButton" onclick="hubOpenModal(\'Participators\')">Participators</button>'
-
-        document.getElementById("edit_name").value = edited_object.name;
-        document.getElementById("edit_description").value = edited_object.description;
-        document.getElementById("edit_code").value = edited_object.code;
 
         edit_panel.innerHTML = edit_panel.innerHTML + '<div>' +
             '<button id="edit_save_button" class="serviceButton" onclick="hubEditSaveHandler()">Save</button>' +
             '<button class="add_button" onclick="hubHideEditPanel()">-</button>' +
             '<button id="edit_delete_button" class="serviceButton" onclick="hubEditDeleteHandler()">Delete</button>' +
             '</div>';
+
 
     }else if(page==='navSubjects'){
         console.log("Expand edit panel id: " + id);
@@ -388,9 +418,14 @@ function hubExpandEditPanel(id) {
                 '"description": " ", ' +
                 '"start_date": " ", ' +
                 '"finish_date": " ", ' +
-                '"code": " " ' +
+                '"code": " ", ' +
+                '"hosts": [], ' +
+                '"parties": []' +
                 '}';
             edited_object = JSON.parse(jsonText);
+            edited_object.start_date = (new Date()).getTime()
+            edited_object.finish_date = (new Date()).getTime()
+
             console.log("Edited object: " + JSON.stringify(edited_object))
         }else{
             edited_object = subjects_list[id];
@@ -416,6 +451,7 @@ function hubExpandEditPanel(id) {
         edit_name.innerHTML = '<input type="text" id="edit_name" placeholder="Name">'
         edit_plan.innerHTML = '<input type="number" id="edit_plan" placeholder="Plan">'
         edit_description.innerHTML = '<textarea id="edit_description" placeholder="Description"></textarea>'
+        document.getElementById("edit_description").value = edited_object.description;
         edit_code.innerHTML ='<input id="edit_code" type="text" placeholder="Code">'
         edit_start.innerHTML = '<input type="date" id="edit_start">'
         edit_finish.innerHTML = '<input type="date" id="edit_finish">'
@@ -430,8 +466,9 @@ function hubExpandEditPanel(id) {
 
         document.getElementById("edit_name").value = edited_object.name;
         document.getElementById("edit_plan").value = edited_object.plan;
-        document.getElementById("edit_description").value = edited_object.description;
+
         document.getElementById("edit_code").value = edited_object.code;
+        console.log("Trying to create date for start_date: " + edited_object.start_date)
         let start_date = new Date(edited_object.start_date)
         start_date = start_date.toISOString().substr(0, 10)
         console.log("start date " + start_date)
